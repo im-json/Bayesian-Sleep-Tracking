@@ -1,5 +1,5 @@
 # Bayesian Sleep Tracking
-Autoregressive Poisson model with examples
+Autoregressive Poisson model
 
 **Background**
 
