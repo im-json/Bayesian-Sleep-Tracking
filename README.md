@@ -27,21 +27,23 @@ Let $u_t = \varphi u_{t-1} + \varepsilon_t$.
 
 $$u_1 \sim \mathcal{N}\left(0,\frac{\sigma^2}{1-\varphi^2}\right), \quad \eta_1 = \mu_1 + u_1$$
 
+$$u_t \sim \mathcal{N}\left(\varphi u_{t-1},\sigma^2\right), \quad t = 2,\dots,T$$
+
 **Likelihood**
 
-The likelihood for $y_t \sim \text{Poisson}(\lambda_t), \ \lambda_t = \exp(\eta_t)$ is given by
+The likelihood for $y_t$ is given by
 
 $$L(y_t) = \prod_{t=1}^{T}\frac{\lambda_t^{y_t}e^{-\lambda_t}}{y_t!} = \frac{1}{\prod_{t=1}^{T}y_t!}\prod_{t=1}^{T}\exp\left\lbrace y_t\eta_t - e^{\eta_t}\right\rbrace = \frac{1}{\prod_{t=1}^{T}y_t!}\exp\left\lbrace\sum_{t=1}^{T}\left(y_t\eta_t - e^{\eta_t}\right)\right\rbrace$$
 
 **Latent AR(1) process**
 
-The density for $u_1 \sim \mathcal{N}\left(0,\sigma^2/\left(1-\varphi^2\right)\right)$ is given by
+The density for $u_1$ is given by
 
 $$
 p(u_1) = \frac{1}{\sqrt{2\pi\left(\sigma^2/\left(1-\varphi^2\right)\right)}}\exp\left\lbrace -\frac{u_1^2}{2\left(\sigma^2/\left(1-\varphi^2\right)\right)}\right\rbrace = \frac{\sqrt{1-\varphi^2}}{\sqrt{2\pi\sigma^2}}\exp\left\lbrace -\frac{u_1^2\left(1-\varphi^2\right)}{2\sigma^2}\right\rbrace
 $$
 
-The likelihood for $u_t \sim \mathcal{N}(\varphi u_{t-1},\sigma^2), \ t = 2,\dots,T$ is given by
+The likelihood for $u_t$ is given by
 
 $$L(u_t) = \prod_{t=2}^{T}\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left\lbrace -\frac{(u_t - \varphi u_{t-1})^2}{2\sigma^2}\right\rbrace = \left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)^{T}\prod_{t=2}^{T}\exp\left\lbrace -\frac{(u_t - \varphi u_{t-1})^2}{2\sigma^2}\right\rbrace$$
 
@@ -64,11 +66,11 @@ The densities for $\beta_0$ and $\beta_1$ are
 
 $$p(\beta_0) = \frac{1}{\sqrt{2\pi}}\exp\left\lbrace -\frac{\beta_0^2}{2}\right\rbrace, \qquad p(\beta_1) = \frac{1}{\sqrt{\pi/2}}\exp\left\lbrace -2\beta_1^2\right\rbrace$$
 
-The density for $\varphi \sim \text{Uniform}(0,1)$ is given by
+The density for $\varphi$ is given by
 
 $$p(\varphi) = \frac{1}{b-a} = 1, \quad \varphi \in [0,1]$$
 
-The density for $\sigma \sim \text{Half-Cauchy(0,1)}$ is given by
+The density for $\sigma$ is given by
 
 $$p(\sigma) = \frac{2}{\pi\gamma\left(1 + (\sigma/\gamma)^2\right)} = \frac{2}{\pi\left(1 + \sigma^2\right)}, \quad \sigma \ge 0$$
 
