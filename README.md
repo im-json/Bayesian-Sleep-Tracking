@@ -58,7 +58,7 @@ $$
 
 We choose the following weakly informative priors.
 
-$$\beta_0 \sim \mathcal{N}(0,1^2), \qquad \beta_1 \sim \mathcal{N}(0,0.5^2), \qquad \varphi \sim \text{Uniform}(0,1), \qquad \sigma \sim \text{Half-Cauchy}(0,1)$$
+$$\beta_0 \sim \mathcal{N}\left(0,1^2\right), \qquad \beta_1 \sim \mathcal{N}\left(0,0.5^2\right), \qquad \varphi \sim \text{Uniform}(0,1), \qquad \sigma \sim \text{Half-Cauchy}(0,1)$$
 
 The densities for $\beta_0$ and $\beta_1$ are
 
