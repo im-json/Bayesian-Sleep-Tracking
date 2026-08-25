@@ -60,7 +60,7 @@ We choose the following weakly informative priors.
 
 $$\beta_0 \sim \mathcal{N}(0,1^2), \qquad \beta_1 \sim \mathcal{N}(0,0.5^2), \qquad \varphi \sim \text{Uniform}(0,1), \qquad \sigma \sim \text{Half-Cauchy}(0,1)$$
 
-The densities for $\beta_0 \sim \mathcal{N}(0,1^2)$ and $\beta_1 \sim \mathcal{N}(0,0.5^2)$ are
+The densities for $\beta_0$ and $\beta_1$ are
 
 $$p(\beta_0) = \frac{1}{\sqrt{2\pi}}\exp\left\lbrace -\frac{\beta_0^2}{2}\right\rbrace, \qquad p(\beta_1) = \frac{1}{\sqrt{\pi/2}}\exp\left\lbrace -2\beta_1^2\right\rbrace$$
 
