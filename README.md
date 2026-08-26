@@ -1,5 +1,5 @@
 # Bayesian Sleep Tracking
-Autoregressive Poisson model
+Autoregressive Poisson model fit with adaptive MCMC
 
 **Background**
 
@@ -111,3 +111,5 @@ $$
 &- \frac{1}{2\sigma^2}\left(u_1^2\left(1-\varphi^2\right) + \sum_{t=2}^{T}\left(u_t - \varphi u_{t-1}\right)^2\right) - \frac{\beta_0^2}{2} - 2\beta_1^2
 \end{aligned}
 $$
+
+# Adaptive MCMC
