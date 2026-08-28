@@ -78,7 +78,8 @@ Hence we have
 
 $$
 \begin{aligned}
-p(\beta_0)p(\beta_1)p(\varphi)p(\sigma) &= \frac{1}{\sqrt{2\pi}}\exp\left\lbrace -\frac{\beta_0^2}{2}\right\rbrace\frac{1}{\sqrt{\pi/2}}\exp\left\lbrace -2\beta_1^2\right\rbrace\frac{2}{\pi\left(1 + \sigma^2\right)} = \frac{2}{\pi^2\left(1 + \sigma^2\right)}\exp\left\lbrace -\frac{\beta_0^2}{2} - 2\beta_1^2\right\rbrace
+p(\beta_0)p(\beta_1)p(\varphi)p(\sigma) &= \frac{1}{\sqrt{2\pi}}\exp\left\lbrace -\frac{\beta_0^2}{2}\right\rbrace\frac{1}{\sqrt{\pi/2}}\exp\left\lbrace -2\beta_1^2\right\rbrace\frac{2}{\pi\left(1 + \sigma^2\right)} \\
+&= \frac{2}{\pi^2\left(1 + \sigma^2\right)}\exp\left\lbrace -\frac{\beta_0^2}{2} - 2\beta_1^2\right\rbrace
 \end{aligned}
 $$
 
@@ -97,7 +98,8 @@ $$
 \begin{aligned}
 p(\theta,\eta\mid y) &\propto \left(\frac{2}{\pi^2(2\pi)^{(1+T)/2}\prod_{t=1}^{T}y_t!}\right)\exp\left\lbrace \sum_{t=1}^{T}\left(y_t\eta_t - e^{\eta_t}\right)\right\rbrace \times \frac{\sqrt{1-\varphi^2}}{\sigma^{1+T}} \\
 &\times \exp\left\lbrace -\frac{1}{2\sigma^2}\left(u_1^2\left(1-\varphi^2\right) + \sum_{t=2}^{T}(u_t - \varphi u_{t-1})^2\right)\right\rbrace \times \frac{1}{\left(1 + \sigma^2\right)}\exp\left\lbrace -\frac{\beta_0^2}{2} - 2\beta_1^2\right\rbrace \\
-p(\theta,\eta\mid y) &\propto \frac{\sqrt{1-\varphi^2}}{\left(1+\sigma^2\right)\sigma^{1+T}}\exp\left\lbrace \sum_{t=1}^{T}\left(y_t\eta_t - e^{\eta_t}\right) -\frac{1}{2\sigma^2}\left(u_1^2\left(1-\varphi^2\right) + \sum_{t=2}^{T}\left(u_t - \varphi u_{t-1}\right)^2\right) - \frac{\beta_0^2}{2} - 2\beta_1^2\right\rbrace
+p(\theta,\eta\mid y) &\propto \frac{\sqrt{1-\varphi^2}}{\left(1+\sigma^2\right)\sigma^{1+T}} \\
+&\times \exp\left\lbrace \sum_{t=1}^{T}\left(y_t\eta_t - e^{\eta_t}\right) -\frac{1}{2\sigma^2}\left(u_1^2\left(1-\varphi^2\right) + \sum_{t=2}^{T}\left(u_t - \varphi u_{t-1}\right)^2\right) - \frac{\beta_0^2}{2} - 2\beta_1^2\right\rbrace
 \end{aligned}
 $$
 
