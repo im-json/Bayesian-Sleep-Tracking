@@ -7,8 +7,6 @@ $\texttt{Sleep}$ is defined as number of hours of sleep.
 
 $\texttt{Tiredness}$ is defined as subjective tiredness on a scale from 1 to 10.
 
-$\texttt{Fasting}$ is a factor variable, defined as if three quarters or more of a 24 hour day (18+ hours) were spent fasted.
-
 # Poisson AR(1) model
 
 Let $y$ be $\texttt{Tiredness}$ and $x_1$ be $\texttt{Sleep}$. For observations $t = 1,\dots,T$,
