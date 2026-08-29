@@ -65,9 +65,9 @@ $$\alpha = \frac{g\left(\theta\_{i,j}^\*\right)/q\left(\theta^{(j)\*}\mid\theta\
 
 **Variables**
 
-Let $\texttt{y}$ be $\texttt{Tiredness}$, $\texttt{x1}$ be $\texttt{Sleep}$ scaled between 0 and 1, and $\texttt{eta}$ be $\texttt{log(y)}$.
+Let $\texttt{y}$ be $\texttt{Tiredness}$, $\texttt{x1}$ be $\texttt{Sleep}$ scaled between 0 and 1, and $\texttt{eta\\_init}$ be $\log(y)$.
 
-Let $\texttt{params}$ be a vector containing named parameters $\texttt{beta0, beta1, phi, sigma}$.
+Let $\texttt{params}$ be a vector containing named parameters $\texttt{beta0}$, $\texttt{beta1}$, $\texttt{phi}$, $\texttt{sigma}$, $\texttt{eta1}$, $\texttt{eta2}$, $\dots$
 
 Let $\texttt{sd\\_cand}$ be a vector containing proposed standard deviations for each parameter.
 
