@@ -148,9 +148,11 @@ Let $\texttt{sd\\_cand}$ be a vector containing proposed standard deviations for
 ```R
 y <- Tiredness
 x1 <- scale(Sleep)[,1]
-eta <- log(y)
-params <- c(beta0 = 1.0, beta1 = -0.3, phi = 0.5, sigma = 0.5)
-sd_cand <- c(beta0 = 0.1, beta1 = 0.1, phi = 0.05, sigma = 0.05)
+eta_init <- log(y)
+params <- c(beta0 = 1.0, beta1 = -0.3, phi = 0.5, sigma = 0.5,
+            setNames(eta_init, paste0("eta", 1:length(eta_init))))
+sd_cand <- c(beta0 = 0.1, beta1 = 0.1, phi = 0.05, sigma = 0.05,
+             setNames(rep(0.3, length(y)), paste0("eta", 1:length(y))))
 ```
 
 **Log Posterior Function**
@@ -158,15 +160,17 @@ sd_cand <- c(beta0 = 0.1, beta1 = 0.1, phi = 0.05, sigma = 0.05)
 We define an $\texttt{R}$ function $\texttt{log\\_post}$ which calculates the log posterior.
 
 ```R
-log_post <- function(y, x1, eta, params) {
+log_post <- function(y, x1, params) {
+  T <- length(y)
+  
   beta0 <- params["beta0"]
   beta1 <- params["beta1"]
   phi <- params["phi"]
   sigma <- params["sigma"]
+  eta <- params[paste0("eta", 1:T)]
   
   if (phi <= 0 || phi >= 1 || sigma <= 0) return (-Inf)
   
-  T <- length(y)
   mu <- beta0 + beta1*x1
   u <- eta - mu
   
@@ -183,20 +187,21 @@ log_post <- function(y, x1, eta, params) {
 Let $\texttt{n\\_iter}$ be the number of iterations. We define a function $\texttt{metro\\_within\\_gibbs}$ to run the random walk Metropolis-within-Gibbs algorithm.
 
 ```R
-metro_within_gibbs <- function(y, x1, eta, params, n_iter, sd_cand) {
-  chain <- matrix(NA, nrow = n_iter, ncol = 4, dimnames = list(NULL, names(params)))
-  accept <- setNames(numeric(4), names(params))
-  log_curr <- log_post(y, x1, eta, params)
+metro_within_gibbs <- function(y, x1, params, n_iter, sd_cand) {
+  chain <- matrix(NA, nrow = n_iter, ncol = length(params),
+                  dimnames = list(NULL, names(params)))
+  accept <- setNames(numeric(length(params)), names(params))
+  log_curr <- log_post(y, x1, params)
   
   for (i in 1:n_iter) {
-    for (j in 1:4) {
-      params_cand <- params
-      params_cand[j] <- params[j] + rnorm(1, mean = 0, sd = sd_cand[j])
-      log_cand <- log_post(y, x1, eta, params_cand)
+    for (j in 1:length(params)) {
+      cand <- params
+      cand[j] <- params[j] + rnorm(1, mean = 0, sd = sd_cand[j])
+      log_cand <- log_post(y, x1, cand)
       log_alpha = log_cand - log_curr
       
       if (log(runif(1)) < log_alpha) {
-        params <- params_cand
+        params <- cand
         log_curr <- log_cand
         accept[j] <- accept[j] + 1
       }
@@ -204,31 +209,43 @@ metro_within_gibbs <- function(y, x1, eta, params, n_iter, sd_cand) {
     chain[i,] <- params
   }
   
-  list(chain = chain, accept_rates = accept / n_iter)
+  list(chain = chain,
+       prior_accept_rates = accept[c("beta0","beta1","phi","sigma")] / n_iter,
+       eta_accept_rates = accept[grepl("^eta", names(accept))] / n_iter)
 }
 ```
 
-We run the sampling function for 10000 iterations.
+We run the sampling function for 100000 iterations.
 
 ```R
-result <- metro_within_gibbs(y, x1, eta, params, 10000, sd_cand)
-result$accept_rates
- beta0  beta1    phi  sigma 
-0.8593 0.7822 0.9167 0.8465
+result <- metro_within_gibbs(y, x1, params, 100000, sd_cand)
+
+result$prior_accept_rates
+  beta0   beta1     phi   sigma 
+0.32074 0.19566 0.89437 0.24970
+
+result$eta_accept_rates
+   eta1    eta2    eta3    eta4    eta5    eta6    eta7    eta8    eta9   eta10 
+0.20180 0.18963 0.18811 0.19067 0.18893 0.19030 0.19004 0.18981 0.19246 0.20758
 ```
 
 **Interpretation**
 
-$\texttt{params}$ contains four parameters, and $\texttt{accept}$ contains their corresponding acceptance rates. For the one dimensional case, the optimal acceptance rate is approximately between 0.2 and 0.5.
-As $\texttt{accept\\_rates}$ exceeds 0.5 for all parameters, the acceptance rates are too high and we increase the corresponding values in $\texttt{sd\\_cand}$. If the new acceptance rates are too low, we decrease the corresponding values in $\texttt{sd\\_cand}$. After repeated adjustments, we get the following values for $\texttt{sd\\_cand}$.
+$\texttt{params}$ contains four parameters, and $\texttt{accept}$ contains their corresponding acceptance rates. For the one dimensional case, the optimal acceptance rate is approximately between 0.2 and 0.5. For parameters with acceptance rate $> 0.5$, we increase the corresponding values in $\texttt{sd\\_cand}$. For parameters with acceptance rate $< 0.2$, we decrease the corresponding values in $\texttt{sd\\_cand}$. After repeated adjustments, we get the following values for $\texttt{sd\\_cand}$.
 
 ```R
-sd_cand <- c(beta0 = 0.655, beta1 = 0.325, phi = 0.515, sigma = 0.255)
+sd_cand <- c(beta0 = 0.05, beta1 = 0.0125, phi = 0.42, sigma = 0.0125,
+             setNames(rep(0.075, length(y)), paste0("eta", 1:length(y))))
 
-result <- metro_within_gibbs(y, x1, eta, params, 10000, sd_cand)
-result$accept_rates
- beta0  beta1    phi  sigma 
-0.4399 0.4358 0.4262 0.4382
+result <- metro_within_gibbs(y, x1, params, 100000, sd_cand)
+
+result$prior_accept_rates
+  beta0   beta1     phi   sigma 
+0.39432 0.45894 0.45319 0.42155
+
+result$eta_accept_rates
+eta1    eta2    eta3    eta4    eta5    eta6    eta7    eta8    eta9   eta10
+0.38745 0.37209 0.37033 0.37488 0.36969 0.37096 0.36840 0.37157 0.37306 0.38811
 ```
 
 **Burn-in**
