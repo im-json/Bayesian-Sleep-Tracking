@@ -244,7 +244,7 @@ result$prior_accept_rates
 0.39432 0.45894 0.45319 0.42155
 
 result$eta_accept_rates
-eta1    eta2    eta3    eta4    eta5    eta6    eta7    eta8    eta9   eta10
+   eta1    eta2    eta3    eta4    eta5    eta6    eta7    eta8    eta9   eta10
 0.38745 0.37209 0.37033 0.37488 0.36969 0.37096 0.36840 0.37157 0.37306 0.38811
 ```
 
