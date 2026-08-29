@@ -1,5 +1,5 @@
 # Bayesian Sleep Tracking
-Autoregressive Poisson model fit with adaptive MCMC
+Autoregressive Poisson model using Metropolis-within-Gibbs MCMC
 
 **Background**
 
@@ -114,4 +114,120 @@ $$
 \end{aligned}
 $$
 
-# Adaptive MCMC
+# Metropolis-within-Gibbs MCMC
+
+**Pseudocode**
+
+The following pseudocode is based off an example from RPubs.
+
+1. Select an initial value $\theta\_0$.
+2. For $i = 1,\dots,n$ iterations, repeat the following steps:
+
+   (a) Set $\theta\_{i,0} = \theta\_{i-1}$
+
+   (b) For $j = 1,\dots,4$, repeat the following steps:
+     - Draw a candidate value $\theta^{(j)\*}$ from a proposal distribution $q\left(\theta^{(j)\*}\mid\theta\_{i,j-1}^{(j)}\right)$.
+     - Form the candidate state $\theta\_{i,j}^\*$ by replacing the $j$th component of $\theta\_{i,j-1}$ with $\theta^{(j)\*}$, leaving all other components unchanged.
+     - Compute the ratio
+$$\alpha = \frac{g\left(\theta\_{i,j}^\*\right)/q\left(\theta^{(j)\*}\mid\theta\_{i,j-1}^{(j)}\right)}{g\left(\theta\_{i,j-1}\right)/q\left(\theta\_{i,j-1}^{(j)}\mid\theta^{(j)\*}\right)} = \frac{g\left(\theta\_{i,j}^\*\right)q\left(\theta\_{i,j-1}^{(j)}\mid\theta^{(j)\*}\right)}{g\left(\theta\_{i,j-1}\right)q\left(\theta^{(j)\*}\mid\theta\_{i,j-1}^{(j)}\right)}$$
+     - If $\alpha \ge 1$, set $\theta\_{i,j} = \theta\_{i,j}^\*$. If $\alpha < 1$, then set $\theta\_{i,j} = \theta\_{i,j}^\*$ with probability $\alpha$, or $\theta\_{i,j} = \theta\_{i,j-1}$ with probability $1-\alpha$.
+
+   (c) Set $\theta\_i = \theta\_{i,4}$
+
+**Variables**
+
+Let $\texttt{y}$ be $\texttt{Tiredness}$, $\texttt{x1}$ be $\texttt{Sleep}$ scaled between 0 and 1, and $\texttt{eta}$ be $\texttt{log(y)}$.
+
+Let $\texttt{params}$ be a vector containing named parameters $\texttt{beta0, beta1, phi, sigma}$.
+
+Let $\texttt{sd\\_cand}$ be a vector containing proposed standard deviations for each parameter.
+
+```R
+y <- Tiredness
+x1 <- scale(Sleep)[,1]
+eta <- log(y)
+params <- c(beta0 = 1.0, beta1 = -0.3, phi = 0.5, sigma = 0.5)
+sd_cand <- c(beta0 = 0.1, beta1 = 0.1, phi = 0.05, sigma = 0.05)
+```
+
+**Log Posterior Function**
+
+We define an $\texttt{R}$ function $\texttt{log\\_post}$ which calculates the log posterior.
+
+```R
+log_post <- function(y, x1, eta, params) {
+  beta0 <- params["beta0"]
+  beta1 <- params["beta1"]
+  phi <- params["phi"]
+  sigma <- params["sigma"]
+  
+  if (phi <= 0 || phi >= 1 || sigma <= 0) return (-Inf)
+  
+  T <- length(y)
+  mu <- beta0 + beta1*x1
+  u <- eta - mu
+  
+  like <- sum(y*eta - exp(eta))
+  latent <- -(1/(2*sigma^2))*((u[1]^2)*(1-phi^2) + sum((u[2:T] - phi*u[1:(T-1)])^2))
+  priors <- (1/2)*log(1-phi^2) - log(1+sigma^2) - (1+T)*log(sigma) - (beta0^2/2) - 2*beta1^2
+  
+  return (like + latent + priors)
+}
+```
+
+**Sampling Function**
+
+Let $\texttt{n\\_iter}$ be the number of iterations. We define a function $\texttt{metro\\_within\\_gibbs}$ to run the random walk Metropolis-within-Gibbs algorithm.
+
+```R
+metro_within_gibbs <- function(y, x1, eta, params, n_iter, sd_cand) {
+  chain <- matrix(NA, nrow = n_iter, ncol = 4, dimnames = list(NULL, names(params)))
+  accept <- setNames(numeric(4), names(params))
+  log_curr <- log_post(y, x1, eta, params)
+  
+  for (i in 1:n_iter) {
+    for (j in 1:4) {
+      params_cand <- params
+      params_cand[j] <- params[j] + rnorm(1, mean = 0, sd = sd_cand[j])
+      log_cand <- log_post(y, x1, eta, params_cand)
+      log_alpha = log_cand - log_curr
+      
+      if (log(runif(1)) < log_alpha) {
+        params <- params_cand
+        log_curr <- log_cand
+        accept[j] <- accept[j] + 1
+      }
+    }
+    chain[i,] <- params
+  }
+  
+  list(chain = chain, accept_rates = accept / n_iter)
+}
+```
+
+We run the sampling function for 10000 iterations.
+
+```R
+result <- metro_within_gibbs(y, x1, eta, params, 10000, sd_cand)
+result$accept_rates
+ beta0  beta1    phi  sigma 
+0.8593 0.7822 0.9167 0.8465
+```
+
+**Interpretation**
+
+$\texttt{params}$ contains four parameters, and $\texttt{accept}$ contains their corresponding acceptance rates. For the one dimensional case, the optimal acceptance rate is approximately between 0.2 and 0.5.
+As $\texttt{accept\\_rates}$ exceeds 0.5 for all parameters, the acceptance rates are too high and we increase the corresponding values in $\texttt{sd\\_cand}$. If the new acceptance rates are too low, we decrease the corresponding values in $\texttt{sd\\_cand}$. After repeated adjustments, we get the following values for $\texttt{sd\\_cand}$.
+
+```R
+sd_cand <- c(beta0 = 0.655, beta1 = 0.325, phi = 0.515, sigma = 0.255)
+
+result <- metro_within_gibbs(y, x1, eta, params, 10000, sd_cand)
+result$accept_rates
+ beta0  beta1    phi  sigma 
+0.4399 0.4358 0.4262 0.4382
+```
+
+**Burn-in**
+
+# Inference
