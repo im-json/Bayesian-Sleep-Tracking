@@ -41,8 +41,6 @@ Let $\texttt{y}$ be $\texttt{Tiredness}$, $\texttt{x1}$ be $\texttt{Sleep}$ stan
 
 Let $\texttt{params}$ be a vector containing named parameters $\texttt{beta0}$, $\texttt{beta1}$, $\texttt{phi}$, $\texttt{sigma}$, $\texttt{eta1}$, $\texttt{eta2}$, $\dots$
 
-Let $\texttt{sd\\_cand}$ be a vector containing proposed standard deviations for each parameter.
-
 ```R
 y <- Tiredness
 x1 <- scale(Sleep)[,1]
@@ -108,7 +106,7 @@ $$\alpha = \frac{g\left(\theta\_{i,j}^\*\right)/q\left(\theta^{(j)\*}\mid\theta\
 
 **Sampling Function**
 
-Let $\texttt{n\\_iter}$ be the number of iterations. We define a function $\texttt{metro\\_within\\_gibbs}$ to run the random walk Metropolis-within-Gibbs algorithm.
+Let $\texttt{n\\_iter}$ be the number of iterations, and $\texttt{sd\\_cand}$ be a vector containing proposed standard deviations for each parameter. We define a function $\texttt{metro\\_within\\_gibbs}$ to run the random walk Metropolis-within-Gibbs algorithm.
 
 ```R
 metro_within_gibbs <- function(y, x1, params, n_iter, sd_cand) {
