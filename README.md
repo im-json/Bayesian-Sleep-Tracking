@@ -156,7 +156,7 @@ result$eta_accept_rates
 0.20180 0.18963 0.18811 0.19067 0.18893 0.19030 0.19004 0.18981 0.19246 0.20758
 ```
 
-**Interpretation**
+# Inference
 
 $\texttt{params}$ contains four parameters, and $\texttt{accept}$ contains their corresponding acceptance rates. For the one dimensional case, the optimal acceptance rate is approximately between 0.2 and 0.5. For parameters with acceptance rate $> 0.5$, we increase the corresponding values in $\texttt{sd\\_cand}$. For parameters with acceptance rate $< 0.2$, we decrease the corresponding values in $\texttt{sd\\_cand}$. After repeated adjustments, we get the following values for $\texttt{sd\\_cand}$.
 
@@ -176,5 +176,3 @@ result$eta_accept_rates
 ```
 
 **Burn-in**
-
-# Inference
