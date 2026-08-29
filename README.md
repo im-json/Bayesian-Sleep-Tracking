@@ -85,10 +85,13 @@ $$
 
 **Joint Posterior**
 
+Hence the joint posterior is given by
+
 $$
 \begin{aligned}
-p(\theta,\eta\mid y) &\propto \frac{1}{\prod_{t=1}^{T}y_t!}\exp\left\lbrace \sum_{t=1}^{T}\left(y_t\eta_t - e^{\eta_t}\right)\right\rbrace \times \frac{\sqrt{1-\varphi^2}}{\left(2\pi\sigma^2\right)^{(1+T)/2}} \\
-&\times \exp\left\lbrace -\frac{1}{2\sigma^2}\left(u_1^2\left(1-\varphi^2\right) + \sum_{t=2}^{T}(u_t - \varphi u_{t-1})^2\right)\right\rbrace \times \frac{2}{\pi^2\left(1 + \sigma^2\right)}\exp\left\lbrace -\frac{\beta_0^2}{2} - 2\beta_1^2\right\rbrace
+p(\theta,\eta\mid y) &\propto \underbrace{\frac{1}{\prod_{t=1}^{T}y_t!}\exp\left\lbrace\sum_{t=1}^{T}\left(y_t\eta_t - e^{\eta_t}\right)\right\rbrace}\_{\text{Poisson likelihood}} \\
+&\times \underbrace{\frac{\sqrt{1-\varphi^2}}{\left(2\pi\sigma^2\right)^{(1+T)/2}} \times \exp\left\lbrace-\frac{1}{2\sigma^2}\left(u_1^2\left(1-\varphi^2\right) + \sum_{t=2}^{T}(u_t - \varphi u_{t-1})^2\right)\right\rbrace}\_{\text{Latent process}} \\
+&\times \underbrace{\frac{2}{\pi^2\left(1 + \sigma^2\right)}\exp\left\lbrace-\frac{\beta_0^2}{2} - 2\beta_1^2\right\rbrace}\_{\text{Priors}}
 \end{aligned}
 $$
 
