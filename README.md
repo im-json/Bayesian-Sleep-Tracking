@@ -35,7 +35,7 @@ The likelihood for $y_t$ is given by
 
 $$L(y_t) = \prod_{t=1}^{T}\frac{\lambda_t^{y_t}e^{-\lambda_t}}{y_t!} = \frac{1}{\prod_{t=1}^{T}y_t!}\prod_{t=1}^{T}\exp\left\lbrace y_t\eta_t - e^{\eta_t}\right\rbrace = \frac{1}{\prod_{t=1}^{T}y_t!}\exp\left\lbrace\sum_{t=1}^{T}\left(y_t\eta_t - e^{\eta_t}\right)\right\rbrace$$
 
-**Latent AR(1) process**
+**Latent process**
 
 The density for $u_1$ is given by
 
