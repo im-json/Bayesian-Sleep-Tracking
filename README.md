@@ -33,35 +33,7 @@ We choose the following weakly informative priors.
 
 $$\beta_0 \sim \mathcal{N}\left(0,1^2\right), \qquad \beta_1 \sim \mathcal{N}\left(0,0.5^2\right), \qquad \varphi \sim \text{Uniform}(0,1), \qquad \sigma \sim \text{Half-Cauchy}(0,1)$$
 
-**Log Posterior**
-
-The log posterior up to a proportionality is given by
-
-$$
-\begin{aligned}
-\log\left(p(\theta,\eta\mid y)\right) &\propto \frac{1}{2}\log\left(1-\varphi^2\right) - \log\left(1+\sigma^2\right) - (1+T)\log(\sigma) + \sum_{t=1}^{T}\left(y_t\eta_t - e^{\eta_t}\right) \\
-&- \frac{1}{2\sigma^2}\left(u_1^2\left(1-\varphi^2\right) + \sum_{t=2}^{T}\left(u_t - \varphi u_{t-1}\right)^2\right) - \frac{\beta_0^2}{2} - 2\beta_1^2
-\end{aligned}
-$$
-
-# Metropolis-within-Gibbs MCMC
-
-**Pseudocode**
-
-The following pseudocode is based off an example from RPubs.
-
-1. Select an initial value $\theta\_0$.
-2. For $i = 1,\dots,n$ iterations, repeat the following steps:
-
-   (a) Set $\theta\_{i,0} = \theta\_{i-1}$
-
-   (b) For $j = 1,\dots,p$ parameters, repeat the following steps:
-     - Draw a candidate value $\theta^{(j)\*}$ from a proposal distribution $q\left(\theta^{(j)\*}\mid\theta\_{i,j-1}^{(j)}\right)$.
-     - Form the candidate state $\theta\_{i,j}^\*$ by replacing the $j\text{th}$ component of $\theta\_{i,j-1}$ with $\theta^{(j)\*}$, leaving all other components unchanged.
-     - Compute the ratio
-$$\alpha = \frac{g\left(\theta\_{i,j}^\*\right)/q\left(\theta^{(j)\*}\mid\theta\_{i,j-1}^{(j)}\right)}{g\left(\theta\_{i,j-1}\right)/q\left(\theta\_{i,j-1}^{(j)}\mid\theta^{(j)\*}\right)} = \frac{g\left(\theta\_{i,j}^\*\right)q\left(\theta\_{i,j-1}^{(j)}\mid\theta^{(j)\*}\right)}{g\left(\theta\_{i,j-1}\right)q\left(\theta^{(j)\*}\mid\theta\_{i,j-1}^{(j)}\right)}$$
-     - If $\alpha \ge 1$, set $\theta\_{i,j} = \theta\_{i,j}^\*$. If $\alpha < 1$, then set $\theta\_{i,j} = \theta\_{i,j}^\*$ with probability $\alpha$, or $\theta\_{i,j} = \theta\_{i,j-1}$ with probability $1-\alpha$.
-   (c) Set $\theta\_i = \theta\_{i,p}$
+# Log Posterior
 
 **Variables**
 
@@ -80,6 +52,15 @@ params <- c(beta0 = 1.0, beta1 = -0.3, phi = 0.5, sigma = 0.5,
 sd_cand <- c(beta0 = 0.1, beta1 = 0.1, phi = 0.05, sigma = 0.05,
              setNames(rep(0.3, length(y)), paste0("eta", 1:length(y))))
 ```
+
+The log posterior up to a proportionality is given by
+
+$$
+\begin{aligned}
+\log\left(p(\theta,\eta\mid y)\right) &\propto \frac{1}{2}\log\left(1-\varphi^2\right) - \log\left(1+\sigma^2\right) - (1+T)\log(\sigma) + \sum_{t=1}^{T}\left(y_t\eta_t - e^{\eta_t}\right) \\
+&- \frac{1}{2\sigma^2}\left(u_1^2\left(1-\varphi^2\right) + \sum_{t=2}^{T}\left(u_t - \varphi u_{t-1}\right)^2\right) - \frac{\beta_0^2}{2} - 2\beta_1^2
+\end{aligned}
+$$
 
 **Log Posterior Function**
 
@@ -107,6 +88,25 @@ log_post <- function(y, x1, params) {
   return (like + latent + priors)
 }
 ```
+
+# Metropolis-within-Gibbs MCMC
+
+**Pseudocode**
+
+The following pseudocode is based off an example from RPubs.
+
+1. Select an initial value $\theta\_0$.
+2. For $i = 1,\dots,n$ iterations, repeat the following steps:
+
+   (a) Set $\theta\_{i,0} = \theta\_{i-1}$
+
+   (b) For $j = 1,\dots,p$ parameters, repeat the following steps:
+     - Draw a candidate value $\theta^{(j)\*}$ from a proposal distribution $q\left(\theta^{(j)\*}\mid\theta\_{i,j-1}^{(j)}\right)$.
+     - Form the candidate state $\theta\_{i,j}^\*$ by replacing the $j\text{th}$ component of $\theta\_{i,j-1}$ with $\theta^{(j)\*}$, leaving all other components unchanged.
+     - Compute the ratio
+$$\alpha = \frac{g\left(\theta\_{i,j}^\*\right)/q\left(\theta^{(j)\*}\mid\theta\_{i,j-1}^{(j)}\right)}{g\left(\theta\_{i,j-1}\right)/q\left(\theta\_{i,j-1}^{(j)}\mid\theta^{(j)\*}\right)} = \frac{g\left(\theta\_{i,j}^\*\right)q\left(\theta\_{i,j-1}^{(j)}\mid\theta^{(j)\*}\right)}{g\left(\theta\_{i,j-1}\right)q\left(\theta^{(j)\*}\mid\theta\_{i,j-1}^{(j)}\right)}$$
+     - If $\alpha \ge 1$, set $\theta\_{i,j} = \theta\_{i,j}^\*$. If $\alpha < 1$, then set $\theta\_{i,j} = \theta\_{i,j}^\*$ with probability $\alpha$, or $\theta\_{i,j} = \theta\_{i,j-1}$ with probability $1-\alpha$.
+   (c) Set $\theta\_i = \theta\_{i,p}$
 
 **Sampling Function**
 
