@@ -49,8 +49,6 @@ x1 <- scale(Sleep)[,1]
 eta_init <- log(y)
 params <- c(beta0 = 1.0, beta1 = -0.3, phi = 0.5, sigma = 0.5,
             setNames(eta_init, paste0("eta", 1:length(eta_init))))
-sd_cand <- c(beta0 = 0.1, beta1 = 0.1, phi = 0.05, sigma = 0.05,
-             setNames(rep(0.3, length(y)), paste0("eta", 1:length(y))))
 ```
 
 The log posterior up to a proportionality is given by
@@ -141,9 +139,12 @@ metro_within_gibbs <- function(y, x1, params, n_iter, sd_cand) {
 }
 ```
 
-We run the sampling function for 100000 iterations.
+We initialise $\texttt{sd\\_cand}$ and run the sampling function for 100000 iterations.
 
 ```R
+sd_cand <- c(beta0 = 0.1, beta1 = 0.1, phi = 0.05, sigma = 0.05,
+             setNames(rep(0.3, length(y)), paste0("eta", 1:length(y))))
+
 result <- metro_within_gibbs(y, x1, params, 100000, sd_cand)
 
 result$prior_accept_rates
