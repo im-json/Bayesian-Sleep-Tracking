@@ -37,7 +37,7 @@ $$\beta_0 \sim \mathcal{N}\left(0,1^2\right), \qquad \beta_1 \sim \mathcal{N}\le
 
 **Variables**
 
-Let $\texttt{y}$ be $\texttt{Tiredness}$, $\texttt{x1}$ be $\texttt{Sleep}$ scaled between 0 and 1, and $\texttt{eta\\_init}$ be $\log(y)$.
+Let $\texttt{y}$ be $\texttt{Tiredness}$, $\texttt{x1}$ be $\texttt{Sleep}$ standardised to have mean 0 and standard deviation 1, and $\texttt{eta\\_init}$ be $\log(y)$.
 
 Let $\texttt{params}$ be a vector containing named parameters $\texttt{beta0}$, $\texttt{beta1}$, $\texttt{phi}$, $\texttt{sigma}$, $\texttt{eta1}$, $\texttt{eta2}$, $\dots$
 
